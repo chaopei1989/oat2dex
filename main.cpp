@@ -10,9 +10,9 @@
 
 static void usage() {
     fprintf(stderr,
-              "Usage: OATLoaderDumper [options] ...\n"
-                      "    Example: OATLoaderDumper --oat-file=F:\\androidL\\framework\\arm\\wm.odex --out-path=F:\\androidL\\outdex  \n"
-                      "\n");
+            "Usage: OATLoaderDumper [options] ...\n"
+                    "    Example: OATLoaderDumper --oat-file=F:\\androidL\\framework\\arm\\wm.odex --out-path=F:\\androidL\\outdex  \n"
+                    "\n");
     fprintf(stderr,
             "\n"
                     "    --oat-file=<file.oat>: specifies an input oat filename.\n"
@@ -24,7 +24,7 @@ static void usage() {
                     "\n");
 }
 
-static bool IsDirExist(const std::string& outpath) {
+static bool IsDirExist(const std::string &outpath) {
     bool ret = true;
 
     if (-1 == access(outpath.c_str(), F_OK) && errno == ENOENT) {
@@ -34,17 +34,16 @@ static bool IsDirExist(const std::string& outpath) {
     return ret;
 }
 
-static bool MakeDir(const std::string& outpath) {
+static bool MakeDir(const std::string &outpath) {
     bool ret = false;
-    if (0 == mkdir(outpath.c_str(), 0400|0200)) {
+    if (0 == mkdir(outpath.c_str(), 0400 | 0200)) {
         ret = true;
     }
 
     return ret;
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char *argv[]) {
     argv++;
     argc--;
 
@@ -55,22 +54,22 @@ int main(int argc, char* argv[])
     }
 
     using namespace Art;
-    std::string oat_file = "D:\\c_project\\artdumper-master\\Debug\\a.odex";
-    std::string oat_todex_path = "D:\\c_project\\artdumper-master\\Debug\\aodex";
-// 	for (int i = 0; i < argc; i++) {
-// 		const StringPiece option(argv[i]);
-// 		if (option.starts_with("--oat-file=")) {
-// 			oat_file = option.substr(strlen("--oat-file=")).data();
-// 		}
-// 		else if (option.starts_with("--out-path=")) {
-// 			oat_todex_path = option.substr(strlen("--out-path=")).data();
-// 		}
-// 	}
-// 
-// 	if (oat_file.length() == 0 || oat_todex_path.length() == 0) {
-// 		fprintf(stderr, "--oat-file and --out-path must be specified\n");
-// 		return false;
-// 	}
+    std::string oat_file;// = "D:\\c_project\\artdumper-master\\Debug\\a.odex";
+    std::string oat_todex_path;// = "D:\\c_project\\artdumper-master\\Debug\\aodex";
+    for (int i = 0; i < argc; i++) {
+        const StringPiece option(argv[i]);
+        if (option.starts_with("--oat-file=")) {
+            oat_file = option.substr(strlen("--oat-file=")).data();
+        }
+        else if (option.starts_with("--out-path=")) {
+            oat_todex_path = option.substr(strlen("--out-path=")).data();
+        }
+    }
+
+    if (oat_file.length() == 0 || oat_todex_path.length() == 0) {
+        fprintf(stderr, "--oat-file and --out-path must be specified\n");
+        return false;
+    }
 
     if (!IsDirExist(oat_todex_path)) {
         MakeDir(oat_todex_path);
