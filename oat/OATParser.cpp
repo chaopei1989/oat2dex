@@ -2,6 +2,8 @@
 //
 
 #include <stdio.h>
+#include <errno.h>
+#include <string.h>
 #include "OATParser.h"
 #include "DexHeader.h"
 #include "OATHeader.h"
@@ -37,9 +39,8 @@ namespace Art {
     bool OATParser::OpenOat(std::unique_ptr<char[]> &a_buf, unsigned int &a_len) {
         bool ret = false;
 
-        FILE *f = nullptr;
-        errno_t e = fopen_s(&f, m_oat_file.c_str(), "rb+");
-        if (e != 0) {
+        FILE *f = fopen(m_oat_file.c_str(), "rb+");
+        if (NULL == f) {
             return ret;
         }
 
@@ -49,7 +50,7 @@ namespace Art {
         fseek(f, 0, SEEK_SET);
         a_buf.reset(new char[a_len]);
 
-        fread_s(a_buf.get(), a_len, sizeof(char), a_len, f);
+        fread(a_buf.get(), sizeof(char), a_len, f);
         ret = true;
 
         return ret;
@@ -65,7 +66,7 @@ namespace Art {
         m_oat_end = a_buf.get() + offset + len;
 
         m_oatheader.reset(new OATHeader());
-        memcpy_s(m_oatheader.get(), sizeof(OATHeader), m_oat_begin, sizeof(OATHeader));
+        memcpy(m_oatheader.get(), m_oat_begin, sizeof(OATHeader));
 
         return ret;
     }
@@ -166,15 +167,15 @@ namespace Art {
         std::string out_dex_name;
         MakeDexName(a_dex_name, out_dex_name);
 
-        errno_t e = fopen_s(&f, out_dex_name.c_str(), "ab+");
-        if (e == 0) {
+        f = fopen(out_dex_name.c_str(), "ab+");
+        if (NULL == f) {
             fwrite(a_dex_header, sizeof(char), a_dex_header->file_size_, f);
             fclose(f);
 
             ret = true;
         }
         else {
-            printf_s("error is %d", e);
+            printf("Dump error");
         }
 
         return ret;

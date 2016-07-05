@@ -2,6 +2,7 @@
 
 #include <string>
 #include <memory>
+#include <bits/unique_ptr.h>
 
 namespace Art {
     class DexHeader;
