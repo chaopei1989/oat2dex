@@ -2,7 +2,6 @@
 //
 
 #include <stdio.h>
-#include <w32api/crtdefs.h>
 #include "OATParser.h"
 #include "DexHeader.h"
 #include "OATHeader.h"
@@ -183,12 +182,12 @@ namespace Art {
 }
 
 // 初始化， oat_file为原始的oat文件名 out_dex_path为输出的dex路径
-extern "C" __declspec(dllexport) bool InitOatParser(const char *oat_file, const char *out_dex_path) {
+extern "C" bool InitOatParser(const char *oat_file, const char *out_dex_path) {
     Art::OATParser::GetInstance().init(oat_file, out_dex_path);
     return true;
 }
 
 // 将Ota文件dump成dex文件
-extern "C" __declspec(dllexport) bool DoDumpToDex() {
+extern "C" bool DoDumpToDex() {
     return Art::OATParser::GetInstance().Parser();
 }

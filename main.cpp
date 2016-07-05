@@ -3,9 +3,9 @@
 
 #include "StringPiece.h"
 #include "oatparser.h"
-#include <io.h>
-#include <string>
+#include <unistd.h>
 #include <stdio.h>
+#include <sys/stat.h>
 #include <errno.h>
 
 static void usage() {
@@ -27,7 +27,7 @@ static void usage() {
 static bool IsDirExist(const std::string& outpath) {
     bool ret = true;
 
-    if (-1 == _access(outpath.c_str(), 0) && errno == ENOENT) {
+    if (-1 == access(outpath.c_str(), F_OK) && errno == ENOENT) {
         ret = false;
     }
 
@@ -36,7 +36,7 @@ static bool IsDirExist(const std::string& outpath) {
 
 static bool MakeDir(const std::string& outpath) {
     bool ret = false;
-    if (0 == _mkdir(outpath.c_str())) {
+    if (0 == mkdir(outpath.c_str(), 0400|0200)) {
         ret = true;
     }
 
