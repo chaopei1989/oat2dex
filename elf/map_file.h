@@ -1,3 +1,5 @@
+#include <stdarg.h>
+
 class File {
 
 // This header file defines the class Elf_file which can be used to

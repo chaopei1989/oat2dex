@@ -11,11 +11,26 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -D__STDC_CONSTANT_MACROS -D__
 #                    ${CMAKE_NDK_ROOT}/sources/cxx-stl/stlport/stlport
 #                    )
 set(SOURCE_FILES
+#    elf/elfcpp.h
+#    elf/elfcpp_file.h
+#    elf/elfcpp_internal.h
+#    elf/elfcpp_swap.h
     elf/elfloader.cpp
+#    elf/exec_buffer.h
+    elf/map_file.h
+#    elf/sparc.h
+#    elf/util.h
     oat/DexHeader.cpp
+#    oat/DexHeader.h
     oat/OATHeader.cpp
+#    oat/OATHeader.h
     oat/OATParser.cpp
-    StringPiece.cpp
+#    oat/OATParser.h
+#    base.h
+#    elfloader.h
     main.cpp
+#    oatparser.h
+#    StringPiece.h
+    StringPiece.cpp
 )
 add_executable(oat2dex ${SOURCE_FILES})

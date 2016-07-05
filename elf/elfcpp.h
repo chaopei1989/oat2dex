@@ -37,6 +37,7 @@
 #include "elfcpp_swap.h"
 
 #include <stdint.h>
+#include <string.h>
 
 namespace elfcpp {
 
@@ -1358,7 +1359,10 @@ namespace elfcpp {
         put_st_shndx(Elf_Half v) { this->p_->st_shndx = Convert<16, big_endian>::convert_host(v); }
 
         Sym<size, big_endian>
-        sym() { return Sym<size, big_endian>(reinterpret_cast<unsigned char *>(this->p_)); }
+        sym() {
+            Sym<size, big_endian> sym(reinterpret_cast<unsigned char *>(this->p_));
+            return sym;
+        }
 
     private:
         internal::Sym_data<size> *p_;
