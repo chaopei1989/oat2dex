@@ -1,4 +1,7 @@
 #include <stdarg.h>
+#include<fcntl.h>
+#include <sys/mman.h>
+#include <sys/unistd.h>
 
 class File {
 
@@ -79,78 +82,83 @@ public:
 
 
 class MappingFile : public File {
-    HANDLE hFileMapping;
-public :
-    HANDLE hFile;
+private:
+    int fd;
+    struct stat sb;
 
+public :
     MappingFile(const char *fname) {
         // Open the file that we want to map.
-        hFile = ::CreateFile(fname,
-                             GENERIC_READ | GENERIC_EXECUTE,
-                             0,
-                             NULL,
-                             OPEN_ALWAYS,
-                             FILE_ATTRIBUTE_NORMAL,
-                             NULL);
-        data_size = GetFileSize(hFile, 0);
-        if (hFile == INVALID_HANDLE_VALUE || data_size <= 0)throw "File Not Exist";
+        fd = open(fname, O_RDWR|O_CREAT);
+        if(fd == -1)
+        {
+            perror("open failed!\n");
+            return;
+        }
+        if(fstat(fd, &sb) == -1)
+        {
+            perror("fstat failed\n");
+            return;
+        }
 
         // Create a file-mapping object for the file.
-        hFileMapping = ::CreateFileMapping(hFile,
-                                           NULL,
-                                           PAGE_WRITECOPY,
-                                           0, 0,
-                                           NULL);
-
-        data = (unsigned char *) ::MapViewOfFile(hFileMapping, FILE_MAP_COPY, 0, 0, 0);
-
+        data = reinterpret_cast<unsigned char *>(mmap(0, sb.st_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0));
+        if(data == MAP_FAILED)
+        {
+            perror("mmap failed!\n");
+            return;
+        }
     }
 
     void Close() {
-        UnmapViewOfFile(data);
-        CloseHandle(hFileMapping);
-        CloseHandle(hFile);
+        if (-1 == close(fd)) {
+            perror("close failed!\n");
+        }
+        if (-1 == (munmap(data, sb.st_size * sizeof(char))))
+        {
+            perror("munmap failed");
+        }
     }
 };
 
-struct MM {
-    DWORD mmin, mmax;
-
-    MM() {
-        mmin = (DWORD) -1;
-        mmax = 0;
-    }
-
-    void Put(DWORD start, DWORD size) {
-        if (start == 0 || size == 0)return;
-
-        if (mmin > start) {
-            mmin = start;
-        }
-        if (mmax < start + size) {
-            mmax = start + size;
-        }
-    }
-
-    unsigned char * ptr;
-
-    void Alloc() {
-        SYSTEM_INFO systemInfo;
-        GetSystemInfo(&systemInfo);
-        DWORD rmmin = (DWORD) mmin / systemInfo.dwAllocationGranularity * systemInfo.dwAllocationGranularity;
-        DWORD rmmax = ((DWORD) mmax + systemInfo.dwAllocationGranularity - 1) / systemInfo.dwAllocationGranularity *
-                      systemInfo.dwAllocationGranularity;
-
-        off_t realsize = rmmax - rmmin;
-        ptr = (unsigned char *) VirtualAlloc((LPVOID) rmmin, realsize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-    }
-
-    unsigned char * Ptr() {
-        return ptr;
-    }
-
-    BOOL Protect(unsigned char * ptr, DWORD size, DWORD pro) {
-        DWORD old;
-        return VirtualProtect(ptr, size, pro, &old);
-    }
-};
+//struct MM {
+//    DWORD mmin, mmax;
+//
+//    MM() {
+//        mmin = (DWORD) -1;
+//        mmax = 0;
+//    }
+//
+//    void Put(DWORD start, DWORD size) {
+//        if (start == 0 || size == 0)return;
+//
+//        if (mmin > start) {
+//            mmin = start;
+//        }
+//        if (mmax < start + size) {
+//            mmax = start + size;
+//        }
+//    }
+//
+//    unsigned char * ptr;
+//
+//    void Alloc() {
+//        SYSTEM_INFO systemInfo;
+//        GetSystemInfo(&systemInfo);
+//        DWORD rmmin = (DWORD) mmin / systemInfo.dwAllocationGranularity * systemInfo.dwAllocationGranularity;
+//        DWORD rmmax = ((DWORD) mmax + systemInfo.dwAllocationGranularity - 1) / systemInfo.dwAllocationGranularity *
+//                      systemInfo.dwAllocationGranularity;
+//
+//        off_t realsize = rmmax - rmmin;
+//        ptr = (unsigned char *) VirtualAlloc((LPVOID) rmmin, realsize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+//    }
+//
+//    unsigned char * Ptr() {
+//        return ptr;
+//    }
+//
+//    BOOL Protect(unsigned char * ptr, DWORD size, DWORD pro) {
+//        DWORD old;
+//        return VirtualProtect(ptr, size, pro, &old);
+//    }
+//};

@@ -36,7 +36,7 @@ extern "C" __declspec(dllexport) bool ElfInit(char *elf, unsigned int len) {
     return ret;
 }
 
-extern "C" __declspec(dllexport) bool GetOatInfo(unsigned int &offset, unsigned int &size) {
+extern "C" bool GetOatInfo(unsigned int &offset, unsigned int &size) {
     if (s_oat.file_offset == 0 || s_oat.data_size == 0) {
         return false;
     }
@@ -47,7 +47,7 @@ extern "C" __declspec(dllexport) bool GetOatInfo(unsigned int &offset, unsigned 
     return true;
 }
 
-extern "C" __declspec(dllexport) bool ElfUnInit() {
+extern "C" bool ElfUnInit() {
     //reset s_oat
     s_oat.file_offset = 0;
     s_oat.data_size = 0;

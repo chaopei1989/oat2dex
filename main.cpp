@@ -6,7 +6,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/stat.h>
-#include <errno.h>
 
 static void usage() {
     fprintf(stderr,
