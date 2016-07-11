@@ -26,7 +26,6 @@ set(SOURCE_FILES
 #    oat/OATHeader.h
     oat/OATParser.cpp
 #    oat/OATParser.h
-#    base.h
 #    elfloader.h
     main.cpp
 #    oatparser.h
