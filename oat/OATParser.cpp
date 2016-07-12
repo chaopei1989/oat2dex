@@ -2,12 +2,11 @@
 //
 
 #include <stdio.h>
-#include <errno.h>
 #include <string.h>
 #include "OATParser.h"
 #include "DexHeader.h"
 #include "OATHeader.h"
-#include "../elfloader.h"
+#include "elfloader.h"
 
 namespace Art {
     OATParser OATParser::m_oat_parser;
@@ -92,7 +91,7 @@ namespace Art {
         // 文件头是从oat的文件头，是从rodata处开始
         const char *oat = Begin();
 
-        // OatHeader的头为0x54
+        // OatHeader的头为0x54, sumsung的头是0x60
         oat += sizeof(OATHeader);
         if (oat > End()) {
             return false;

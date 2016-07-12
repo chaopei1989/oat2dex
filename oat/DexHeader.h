@@ -1,4 +1,5 @@
 #pragma once
+
 #include <stdint.h>
 #include <stddef.h>
 
@@ -10,9 +11,9 @@ namespace Art {
     public:
         static const size_t kSha1DigestSize = 20;
 
-        DexHeader();
+        DexHeader(){}
 
-        ~DexHeader();
+        ~DexHeader(){}
 
         uint8_t magic_[8];
         uint32_t checksum_;  // See also location_checksum_

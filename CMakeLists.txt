@@ -10,6 +10,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -D__STDC_CONSTANT_MACROS -D__
 #                    ${CMAKE_NDK_ROOT}/platforms/android-9/arch-arm/usr/include/EGL
 #                    ${CMAKE_NDK_ROOT}/sources/cxx-stl/stlport/stlport
 #                    )
+
 set(SOURCE_FILES
 #    elf/elfcpp.h
 #    elf/elfcpp_file.h
